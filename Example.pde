@@ -38,7 +38,7 @@ void setup() {
     ); 
     Particle p = new Particle(position);
     // Give each particle a mass...
-    p.addProperty(new Mass(10));
+    p.addProperty(new Mass(random(10,20)));
     // ...and a charge of +10 or -10
     int charge = random(100) < 50 ? -10 : 10;
     p.addProperty(new Charge(charge));
@@ -74,7 +74,7 @@ void draw() {
   u.paint();
 
   /*
-   * Add a note
+   * Add a label
    */ 
   noStroke();
   fill(180);
