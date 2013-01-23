@@ -1,12 +1,31 @@
-/*
- * ScrambledPhysics 2
+/**
+ * ScrambledPhysics
  * A rewrite of some earlier hacking.
  * The aim is to create a simple, portable physics library
  */
 
+/*
+ * The <code>Things</code> interface must be implemented for anything
+ * that could be added to a universe. It defines the api which the
+ * universe depends upon.
+ */
 interface Thing {
+  /**
+   * The <code>update</code> method will be called once per update
+   * of the universe.
+   */
   void update();
+  /**
+   * The <code>paint</code> method should draw the Thing, and will be
+   * called when the universe is painted.
+   */
   void paint();
+  /**
+   * The <code>removed</code> method is called if the particle is removed
+   * from the universe, and can be overridden to perform some useful
+   * behaviour like readding the particle to the universe, or cleaning up
+   * other references 
+   */
   void removed(Universe u);
 }
 
