@@ -43,7 +43,7 @@ class Universe {
     min_y = 0;
   }
   
-  void addMember(Thing t) {
+  void addThing(Thing t) {
     things.add(t);
   }
   void addLaw(Law l) {
