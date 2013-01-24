@@ -106,9 +106,9 @@ class Universe {
         law.apply(this);
       }
     }
+    for (Thing t: things) t.update();
     if ( edge != null ) edge.apply(this);
     if ( drag != null ) drag.apply(this);
-    for (Thing t: things) t.update();
   }
   void paint() {
     for (Thing t: things) { t.paint(); }
