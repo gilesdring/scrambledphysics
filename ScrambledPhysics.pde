@@ -4,7 +4,7 @@
  * The aim is to create a simple, portable physics library
  */
 
-/*
+/**
  * The <code>Things</code> interface must be implemented for anything
  * that could be added to a universe. It defines the api which the
  * universe depends upon.
@@ -29,11 +29,30 @@ interface Thing {
   void removed(Universe u);
 }
 
+/** 
+ * The <code>Universe</code> class is the core of the simulation. Each
+ * Universe can have laws applied to it, and things added to it.
+ */
 class Universe {
+  /**
+   * An <code>ArrayList</code> containing all the things that have been
+   * added to the universe
+   */
   ArrayList<Thing> things;
+  /**
+   * A series of floats containing the bounds of the defined universe
+   */
   float max_x, min_x, max_y, min_y;
+  /**
+   * A <code>HashMap</code> of the laws that apply to the universe.
+   */
   HashMap<String, Law> laws;
 
+  /**
+   * Default constructor, initialises the <code>things</code> ArrayList and
+   * <code>laws</code> HashMap, and sets the bounds of the universe to the
+   * size of the current sketch.
+   */
   Universe() {
     things = new ArrayList<Thing>();
     laws = new HashMap<String, Law>();
@@ -42,25 +61,48 @@ class Universe {
     max_y = height;
     min_y = 0;
   }
-  
+  /**
+   * Add a thing to the universe
+   */
   void addThing(Thing t) {
     things.add(t);
   }
+  /**
+   * Add a law to the universe
+   */
   void addLaw(Law l) {
     laws.put(l.getName(), l);
   }
+  /**
+   * Update the state of the universe. This should be called whenever you want
+   * the universe to be updated - typically whenever the sketch is drawn
+   */
   void update() {
     Law edge = null, drag = null;
     Law law;
+    // Iterate through the laws applied to the universe
     for (String name : laws.keySet()) {
       law = laws.get(name);
       if (law instanceof DragLaw) {
+        /**
+         * We want to handle <code>DragLaw</code> laws last, as they are affected
+         * by <code>EdgeLaws</code> laws.
+         */
         drag = law;
         continue;
       } else if (law instanceof EdgeLaw ) { // Save edge laws until the end...
+        /**
+         * We want to handle <code>EdgeLaw</code> laws second-to-last, as they are affected
+         * by <code>DragLaw</code> laws.
+         */
         edge = law;
         continue;
       } else {
+        /**
+         * Apply the law to the universe. This will typically alter the state of the
+         * members in the universe (e.g. applying forces, changing position, etc)
+         * although it could do absolutely anything!
+         */
         law.apply(this);
       }
     }
