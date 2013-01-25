@@ -187,7 +187,7 @@ abstract class Law {
   /**
    * Get the name of the law
    *
-   * @returns the name of the law as set by the construtor 
+   * @return the name of the law as set by the construtor 
    */
   String getName() { return name; }
 }
