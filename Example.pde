@@ -27,8 +27,8 @@ void setup() {
   u.addLaw(new Coulomb());
   // Applies drag proportional to the velocity of the particle
   u.addLaw(new StokesDrag(0.1));
-  // Makes particles bounce at the edges
-  u.addLaw(new BounceEdge());
+  // Makes particles wrap at the edges
+  u.addLaw(new WrapEdge());
   
   for (int i = 0; i < 100; i++) {
     // Initialise a series of particles at random positions

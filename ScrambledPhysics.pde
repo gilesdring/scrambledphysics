@@ -56,10 +56,7 @@ class Universe {
   Universe() {
     things = new ArrayList<Thing>();
     laws = new HashMap<String, Law>();
-    max_x = width;
-    min_x = 0;
-    max_y = height;
-    min_y = 0;
+    setBounds();
   }
   /**
    * Add a thing to the universe
@@ -68,7 +65,28 @@ class Universe {
     things.add(t);
   }
   /**
+   * Get the full ArrayList of things in the universe
+   */
+  ArrayList<Thing> getThings() {
+    return things;
+  }
+  /**
+   * Get a thing from the universe
+   */
+  Thing getThing(int i) {
+    return things.get(i);
+  }
+  /**
+   * Count the number of things in the universe
+   */
+  int countThings() {
+    return things.size();
+  }
+  /**
    * Add a law to the universe
+   * Each law has a name, which is used to ensure that only one law of any type
+   * is added to the universe (e.g. EdgeLaws all have the name "Edge"). The laws
+   * are stored in a HashMap to ensure uniqueness.
    */
   void addLaw(Law l) {
     laws.put(l.getName(), l);
@@ -84,21 +102,21 @@ class Universe {
     for (String name : laws.keySet()) {
       law = laws.get(name);
       if (law instanceof DragLaw) {
-        /**
-         * We want to handle <code>DragLaw</code> laws last, as they are affected
-         * by <code>EdgeLaws</code> laws.
+        /*
+         * We want to handle DragLaw laws last, as they are affected
+         * by EdgeLaws laws.
          */
         drag = law;
         continue;
-      } else if (law instanceof EdgeLaw ) { // Save edge laws until the end...
-        /**
-         * We want to handle <code>EdgeLaw</code> laws second-to-last, as they are affected
-         * by <code>DragLaw</code> laws.
+      } else if (law instanceof EdgeLaw ) {
+        /*
+         * We want to handle EdgeLaw laws second-to-last, as they affect
+         * by DragLaw laws.
          */
         edge = law;
         continue;
       } else {
-        /**
+        /*
          * Apply the law to the universe. This will typically alter the state of the
          * members in the universe (e.g. applying forces, changing position, etc)
          * although it could do absolutely anything!
@@ -106,64 +124,119 @@ class Universe {
         law.apply(this);
       }
     }
+    /*
+     * Iterate through all the things in the universe and update them. Typically
+     * this will calculate the acceleration, velocity and position, but could do 
+     * anything...
+     */
     for (Thing t: things) t.update();
+    // Apply any saved edge law
     if ( edge != null ) edge.apply(this);
+    // Apply any saved drag law
+    // TODO Ref issue #1 - may want to update the things in the universe again having done this
     if ( drag != null ) drag.apply(this);
   }
+  /**
+   * Paint the universe by calling the paint method of everything in the universe.
+   * Things do not need to paint themselves using this method - in which case a separate way of 
+   * painting them needs to be implemented.
+   */
   void paint() {
     for (Thing t: things) { t.paint(); }
+  /**
+   * Set the bounds of the universe to between x_min, y_min and x_max, y_max
+   */
   }
-  ArrayList<Thing> getMembers() {
-    return things;
+  void setBounds(float x_min, float y_min, float x_max, float y_max) {
+    min_x = x_min;
+    min_y = y_min;
+    max_x = x_max;
+    max_y = y_max;
   }
-  Thing getMember(int i) {
-    return things.get(i);
-  }
-  int countMembers() {
-    return things.size();
-  }
-  void setBounds(float x1, float y1, float x2, float y2) {
-    min_x = x1;
-    min_y = y1;
-    max_x = x2;
-    max_y = y2;
-  }
+  /**
+   * Set the bounds of the universe to the current screen size
+   */
+  void setBounds() { setBounds(0, 0, width, height); }
 }
 
-
+/**
+ * Base class for all Laws subsequently added to the universe
+ */
 abstract class Law {
+  /**
+   * Name of the law - each Law which extends this abstract class must set this
+   */
   final String name;
   
+  /**
+   * Default constructor
+   * 
+   * @param n Name to set for the class
+   */
   Law(String n) {
     name = n;
   }
 
+  /**
+   * Apply the law to a given universe 
+   *
+   * @param u Universe to which this law should be applied
+   */
   abstract void apply(Universe u);
-  String getName() {
-    return name;
-  }
+  
+  /**
+   * Get the name of the law
+   *
+   * @returns the name of the law as set by the construtor 
+   */
+  String getName() { return name; }
 }
 
+/**
+ * Simple local Gravity, which applies a constant force proportional to the mass of the object
+ */
 class Gravity extends Law {
+  /**
+   * Constant of acceleration in vector form i.e. can apply in any direction
+   */
   PVector G;
-  Gravity() {
-      this(9.8);
-  }
-  Gravity(float v) {
-    this(new PVector(0,v,0));
-  }
+  /**
+   * Default constructor sets the gravity to a downwards value roughly equivalent to gravity on earth
+   */
+  Gravity() { this(9.8); }
+  /**
+   * Single float constructor - assumes that gravity applies downwards
+   *
+   * @param v Value of gravity
+   */
+  Gravity(float v) { this(new PVector(0,v,0)); }
+  /**
+   * Uber constructor, called by all others. Sets the name to "Gravity" and the constant to the PVector passed in
+   *
+   * @param g Vector representation of Gravity
+   */
   Gravity(PVector g) {
     super("Gravity");
     G = g.get();
   }
+  /**
+   * Calculate and apply the force to each particle in the universe
+   *
+   * @param u Universe to apply gravity to
+   */
   void apply(Universe u) {
     PVector force;
-    for ( Thing t: u.getMembers() ) {
+    for ( Thing t: u.getThings() ) {
+      // Only applies to Particles (or subtypes)
       if ( ! ( t instanceof Particle ) ) continue;
+      // Cast t to a particle
       Particle p = (Particle)t;
+      // Doesn't apply to things with no mass
       if ( ! p.hasProperty("Mass") ) continue;
+      // Set the force to the constant, then multiply by the mass
       force = G.get();
       force.mult(p.getProperty("Mass"));
+      // Add the force to the particle
       p.addForce(force);
     }
   }
@@ -173,7 +246,6 @@ abstract class DragLaw extends Law {
   DragLaw() { super("Drag"); }
 }
 
-
 class DryFriction extends DragLaw {
   float mu;
   DryFriction(float v) {
@@ -182,7 +254,7 @@ class DryFriction extends DragLaw {
   }
   void apply(Universe u) {
     PVector force;
-    for ( Thing t: u.getMembers() ) {
+    for ( Thing t: u.getThings() ) {
       if ( ! ( t instanceof Particle ) ) continue;
       Particle p = (Particle)t;
       force = p.velocity.get();
@@ -201,7 +273,7 @@ class StokesDrag extends DragLaw {
   }
   void apply(Universe u) {
     PVector force;
-    for ( Thing t: u.getMembers() ) {
+    for ( Thing t: u.getThings() ) {
       if ( ! ( t instanceof Particle ) ) continue;
       Particle p = (Particle)t;
       force = p.velocity.get();
@@ -225,13 +297,13 @@ class Coulomb extends Law {
   void apply(Universe u) {
     Particle p1, p2;
     PVector force;
-    for ( int i1 = 0; i1 < u.countMembers(); i1++ ) {
-      p1 = getParticle(u.getMember(i1));
+    for ( int i1 = 0; i1 < u.countThings(); i1++ ) {
+      p1 = getParticle(u.getThing(i1));
       if ( p1 == null ) continue;                        // Only valid for subclasses of Particle
       if (! p1.hasProperty("Charge") ) continue;         // ...with a charge
       float p1_q = p1.getProperty("Charge");
-      for ( int i2 = i1 + 1; i2 < u.countMembers(); i2++ ) {
-        p2 = getParticle(u.getMember(i2));
+      for ( int i2 = i1 + 1; i2 < u.countThings(); i2++ ) {
+        p2 = getParticle(u.getThing(i2));
         if ( p2 == null ) continue;                        // Only valid for subclasses of Particle
         if (! p2.hasProperty("Charge") ) continue;
         float p2_q = p2.getProperty("Charge");
@@ -267,7 +339,7 @@ abstract class EdgeLaw extends Law {
 class WrapEdge extends EdgeLaw {
   void apply(Universe u) {
     PVector pos;
-    for ( Thing t: u.getMembers() ) {
+    for ( Thing t: u.getThings() ) {
       if ( ! ( t instanceof Particle ) ) continue;
       Particle p = (Particle)t;
       if ( p.position.x < u.min_x || p.position.x > u.max_x ) {
@@ -304,7 +376,7 @@ class BounceEdge extends EdgeLaw {
   boolean DEBUG = false;
   void apply(Universe u) {
     PVector pos;
-    for ( Thing t: u.getMembers() ) {
+    for ( Thing t: u.getThings() ) {
       if ( ! ( t instanceof Particle ) ) continue;
       Particle p = (Particle)t;
       int b = bounce( p, u );
