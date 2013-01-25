@@ -7,7 +7,7 @@
     <meta name="description" content="Scrambledphysics : Simple physics library for the Processing language, written in pure processing, in a single file." />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
+    <script src="http://cloud.github.com/downloads/processing-js/processing-js/processing-1.4.1.min.js" type="text/javascript"></script>
     <title>Scrambledphysics</title>
   </head>
 
@@ -36,6 +36,20 @@
 <p>ScrambledPhysics is a simple physics engine written in 100% native <a href="http://processing.org/" title="Link to Processing website">Processing</a>.
 The aim of the project is to create a portable (within Processing) which is good enough for basic physics simulations.</p>
 
+<canvas id="ScrambledPhysics" data-processing-sources="ScrambledPhysics.pde Example.pde">
+  <p>Your browser does not support the canvas tag.</p>
+  <!-- Note: you can put any alternative content here. -->
+</canvas>
+<noscript>
+  <p>JavaScript is required to view the contents of this page.</p>
+</noscript>
+
+<p>The example above should give you an idea of what it can do. This is
+simulating 100 charged particles (some positive, some negative), with an
+initial velocity of zero and a random placement within the universe, which is
+640 x 480 pixels in size. When a particle reaches the edge, it wraps around.</p>
+
+<!--
 <h1>Installation</h1>
 
 <ol>
@@ -72,7 +86,7 @@ charges of every other particle in the system.</li>
 <h3>Particle</h3>
       </section>
     </div>
-
+-->
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
