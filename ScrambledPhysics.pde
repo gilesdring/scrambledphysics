@@ -23,8 +23,10 @@ interface Thing {
   /**
    * The <code>removed</code> method is called if the particle is removed
    * from the universe, and can be overridden to perform some useful
-   * behaviour like readding the particle to the universe, or cleaning up
+   * behaviour like re-adding the particle to the universe, or cleaning up
    * other references 
+   *
+   * @param u Universe from which the particle has been removed.
    */
   void removed(Universe u);
 }
@@ -60,6 +62,8 @@ class Universe {
   }
   /**
    * Add a thing to the universe
+   *
+   * @param t Thing to add to the universe
    */
   void addThing(Thing t) {
     things.add(t);
@@ -242,16 +246,37 @@ class Gravity extends Law {
   }
 }
 
+/**
+ * Base class for all Drag laws added to the universe
+ */
 abstract class DragLaw extends Law {
+  /**
+   * Default constructor initialises all DragLaw subclasses with the name 'Drag'
+   */
   DragLaw() { super("Drag"); }
 }
 
+/**
+ * DryFriction Drag laws, applies a constant force opposing the velocity
+ */
 class DryFriction extends DragLaw {
+  /**
+   * Coefficient of friction
+   */ 
   float mu;
+  /**
+   * Constructor calls the default constructor of the DragLaw class
+   *
+   * @param v Coefficient of friction to set
+   */
   DryFriction(float v) {
     super();
     mu = v;
   }
+  /**
+   * Iterate through all particles and apply a force of size mu opposing the 
+   * velocity
+   */
   void apply(Universe u) {
     PVector force;
     for ( Thing t: u.getThings() ) {
