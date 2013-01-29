@@ -23,8 +23,10 @@ interface Thing {
   /**
    * The <code>removed</code> method is called if the particle is removed
    * from the universe, and can be overridden to perform some useful
-   * behaviour like readding the particle to the universe, or cleaning up
+   * behaviour like re-adding the particle to the universe, or cleaning up
    * other references 
+   *
+   * @param u Universe from which the particle has been removed.
    */
   void removed(Universe u);
 }
@@ -60,6 +62,8 @@ class Universe {
   }
   /**
    * Add a thing to the universe
+   *
+   * @param t Thing to add to the universe
    */
   void addThing(Thing t) {
     things.add(t);
@@ -242,16 +246,37 @@ class Gravity extends Law {
   }
 }
 
+/**
+ * Base class for all Drag laws added to the universe
+ */
 abstract class DragLaw extends Law {
+  /**
+   * Default constructor initialises all DragLaw subclasses with the name 'Drag'
+   */
   DragLaw() { super("Drag"); }
 }
 
+/**
+ * DryFriction Drag laws, applies a constant force opposing the velocity
+ */
 class DryFriction extends DragLaw {
+  /**
+   * Coefficient of friction
+   */ 
   float mu;
+  /**
+   * Constructor calls the default constructor of the DragLaw class
+   *
+   * @param v Coefficient of friction to set
+   */
   DryFriction(float v) {
     super();
     mu = v;
   }
+  /**
+   * Iterate through all particles and apply a force of size mu opposing the 
+   * velocity
+   */
   void apply(Universe u) {
     PVector force;
     for ( Thing t: u.getThings() ) {
@@ -267,6 +292,7 @@ class DryFriction extends DragLaw {
 
 class StokesDrag extends DragLaw {
   float coeff;
+  StokesDrag() { this(0.1); }
   StokesDrag(float v) {
     super();
     coeff = v;
@@ -299,23 +325,43 @@ class Coulomb extends Law {
     PVector force;
     for ( int i1 = 0; i1 < u.countThings(); i1++ ) {
       p1 = getParticle(u.getThing(i1));
-      if ( p1 == null ) continue;                        // Only valid for subclasses of Particle
-      if (! p1.hasProperty("Charge") ) continue;         // ...with a charge
+      // Only valid for subclasses of Particle...
+      if ( p1 == null ) continue;
+      // ...with a charge
+      if (! p1.hasProperty("Charge") ) continue;
+      // Store the charge of p1
       float p1_q = p1.getProperty("Charge");
+      /*
+       * Now iterate through all other particles
+       * This is an optimisation, as the force applied on each pair of particles
+       * is symmetrical (per Newton's Third Law), so we only need to calculate this 
+       * once, and apply it twice.
+       */            
       for ( int i2 = i1 + 1; i2 < u.countThings(); i2++ ) {
         p2 = getParticle(u.getThing(i2));
-        if ( p2 == null ) continue;                        // Only valid for subclasses of Particle
+        // Only valid for subclasses of Particle...
+        if ( p2 == null ) continue;
+        // ...with a charge
         if (! p2.hasProperty("Charge") ) continue;
+        // Store the charge of p2
         float p2_q = p2.getProperty("Charge");
-        force = p1.getPosition();
-        force.sub(p2.getPosition());
+        // Calculate the vector between the two particles...
+        force = PVector.sub( p1.getPosition(), p2.getPosition() );
+        // ...and the radius...
         float r = force.mag();
-        force.normalize();
+        // ...if that's zero, the particles are in the same place, so we can't calculate a force
         if ( r == 0 ) continue;
+        // Normalise the force vector to unit length
+        force.normalize();
+        // Calculate the magnitude of the force (according to Coulomb's law)
         float m = k * p1_q * p2_q / (r*r);
+        // Multiply the normalised force vector by he magnitude 
         force.mult(m);
+        // Add this force to the first particle...
         p1.addForce(force);
+        // ...calcualte the inverse...
         force.mult(-1);
+        // ...and apply this to the other particle
         p2.addForce(force);
       }
     }
@@ -326,6 +372,21 @@ class Coulomb extends Law {
     } else {
       return ((Particle)t);
     }
+  }
+}
+
+class Hooke extends Law {
+  Hooke() {
+    super("Hooke");
+  }
+  void apply(Universe u) {
+    Connector con;
+    for ( Thing t: u.getThings() ) {
+      if ( t instanceof Connector ) {
+        con = (Connector)t;
+        con.applyForces();
+      }
+    }    
   }
 }
 
@@ -409,25 +470,42 @@ class BounceEdge extends EdgeLaw {
   }
 }
 
-class Particle implements Thing {
+abstract class ScrambledObject {
+  HashMap<String, Property> properties;
+  
+  ScrambledObject() {
+    properties = new HashMap<String, Property>();
+  }
+
+  void addProperty(Property p) {
+    properties.put(p.getName(), p);
+  }
+  boolean hasProperty(String n) {
+    return properties.containsKey(n);
+  }
+  float getProperty(String n) {
+    return properties.get(n).getValue();
+  }
+}
+
+class Particle extends ScrambledObject implements Thing {
   PVector position;
   PVector velocity;
   PVector acceleration;
   PVector force;
   boolean locked;
   boolean hidden;
-  HashMap<String, Property> properties;
   
   Particle(PVector p) {
     this(p,new PVector(0,0,0));
   }
 
   Particle(PVector p, PVector v) {
+    super();
     position = p.get();
     velocity = v.get();
     acceleration = new PVector();
     force = new PVector();
-    properties = new HashMap<String, Property>();
     locked = false;
   }
   
@@ -438,16 +516,6 @@ class Particle implements Thing {
   void setPosition(PVector p) {
     position = p;
   } 
-  
-  void addProperty(Property p) {
-    properties.put(p.getName(), p);
-  }
-  boolean hasProperty(String n) {
-    return properties.containsKey(n);
-  }
-  float getProperty(String n) {
-    return properties.get(n).getValue();
-  }
   
   void addForce(PVector a) {
     force.add(a);
@@ -476,7 +544,7 @@ class Particle implements Thing {
 } 
 
 /**
- * Properties - these apply to Thing Particles
+ * Properties - these apply to ScrambledObject classes
  */
 abstract class Property {
   float value;
@@ -503,8 +571,33 @@ class Charge extends Property {
   Charge(float v) { super(v, "Charge"); }
 }
 
-class Connector implements Thing {
+class SpringRate extends Property {
+  SpringRate(float v) { super(v, "Spring Rate"); }
+}
+class Length extends Property {
+  Length(float v) { super(v, "Length"); }
+}
+
+class Connector extends ScrambledObject implements Thing {
+  Particle p1, p2;
+  boolean firm;
+  Connector(Particle _p1, Particle _p2) {
+    super();
+    p1 = _p1;
+    p2 = _p2;
+    firm = false;
+  }
+  void applyForces() {
+    if ( hasProperty("Spring Rate" ) ) { 
+      PVector diff = PVector.sub(p1.position, p2.position);
+      float springLength = hasProperty("Length") ? getProperty("Length") : 0;
+      float mag = firm ? max( diff.mag() - springLength, 0) : diff.mag() - springLength;
+      mag = mag * getProperty("Spring Rate");
+      p1.addForce( PVector.mult(diff, -mag ) );
+      p2.addForce( PVector.mult(diff, mag ) );
+    }
+  }  
   void update() {}
-  void paint() {}
+  void paint() { line(p1.position.x,p1.position.y, p2.position.x,p2.position.y); }
   void removed(Universe u) {}
 }
