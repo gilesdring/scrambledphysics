@@ -455,25 +455,42 @@ class BounceEdge extends EdgeLaw {
   }
 }
 
-class Particle implements Thing {
+abstract class ScrambledObject {
+  HashMap<String, Property> properties;
+  
+  ScrambledObject() {
+    properties = new HashMap<String, Property>();
+  }
+
+  void addProperty(Property p) {
+    properties.put(p.getName(), p);
+  }
+  boolean hasProperty(String n) {
+    return properties.containsKey(n);
+  }
+  float getProperty(String n) {
+    return properties.get(n).getValue();
+  }
+}
+
+class Particle extends ScrambledObject implements Thing {
   PVector position;
   PVector velocity;
   PVector acceleration;
   PVector force;
   boolean locked;
   boolean hidden;
-  HashMap<String, Property> properties;
   
   Particle(PVector p) {
     this(p,new PVector(0,0,0));
   }
 
   Particle(PVector p, PVector v) {
+    super();
     position = p.get();
     velocity = v.get();
     acceleration = new PVector();
     force = new PVector();
-    properties = new HashMap<String, Property>();
     locked = false;
   }
   
@@ -484,16 +501,6 @@ class Particle implements Thing {
   void setPosition(PVector p) {
     position = p;
   } 
-  
-  void addProperty(Property p) {
-    properties.put(p.getName(), p);
-  }
-  boolean hasProperty(String n) {
-    return properties.containsKey(n);
-  }
-  float getProperty(String n) {
-    return properties.get(n).getValue();
-  }
   
   void addForce(PVector a) {
     force.add(a);
@@ -522,7 +529,7 @@ class Particle implements Thing {
 } 
 
 /**
- * Properties - these apply to Thing Particles
+ * Properties - these apply to ScrambledObject classes
  */
 abstract class Property {
   float value;
