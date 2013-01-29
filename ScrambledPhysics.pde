@@ -375,6 +375,21 @@ class Coulomb extends Law {
   }
 }
 
+class Hooke extends Law {
+  Hooke() {
+    super("Hooke");
+  }
+  void apply(Universe u) {
+    Connector con;
+    for ( Thing t: u.getThings() ) {
+      if ( t instanceof Connector ) {
+        con = (Connector)t;
+        con.applyForces();
+      }
+    }    
+  }
+}
+
 abstract class EdgeLaw extends Law {
   EdgeLaw() { super("Edge"); }
   boolean inUniverse(Particle p, Universe u) {
@@ -556,8 +571,33 @@ class Charge extends Property {
   Charge(float v) { super(v, "Charge"); }
 }
 
-class Connector implements Thing {
+class SpringRate extends Property {
+  SpringRate(float v) { super(v, "Spring Rate"); }
+}
+class Length extends Property {
+  Length(float v) { super(v, "Length"); }
+}
+
+class Connector extends ScrambledObject implements Thing {
+  Particle p1, p2;
+  boolean firm;
+  Connector(Particle _p1, Particle _p2) {
+    super();
+    p1 = _p1;
+    p2 = _p2;
+    firm = false;
+  }
+  void applyForces() {
+    if ( hasProperty("Spring Rate" ) ) { 
+      PVector diff = PVector.sub(p1.position, p2.position);
+      float springLength = hasProperty("Length") ? getProperty("Length") : 0;
+      float mag = firm ? max( diff.mag() - springLength, 0) : diff.mag() - springLength;
+      mag = mag * getProperty("Spring Rate");
+      p1.addForce( PVector.mult(diff, -mag ) );
+      p2.addForce( PVector.mult(diff, mag ) );
+    }
+  }  
   void update() {}
-  void paint() {}
+  void paint() { line(p1.position.x,p1.position.y, p2.position.x,p2.position.y); }
   void removed(Universe u) {}
 }
