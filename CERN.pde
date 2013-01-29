@@ -48,6 +48,7 @@ class Emitter {
   }
 }
 
+
 class BigParticle extends Particle {
   private final int size;
   private final color fillColour;
@@ -66,3 +67,4 @@ class BigParticle extends Particle {
     popMatrix(); 
   }
 }
+
