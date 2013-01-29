@@ -292,6 +292,7 @@ class DryFriction extends DragLaw {
 
 class StokesDrag extends DragLaw {
   float coeff;
+  StokesDrag() { this(0.1); }
   StokesDrag(float v) {
     super();
     coeff = v;
