@@ -1,5 +1,5 @@
 Universe u;
-Particle mouse;
+Finger mouse;
 
 void setup() {
   size(640,480);
