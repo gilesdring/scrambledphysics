@@ -11,7 +11,7 @@ void setup() {
   root.lock();
   u.addThing(root);
   Charge chr = new Charge(10.0);
-  for (int i = 0; i< 200; i++ ) {
+  for (int i = 0; i< 50; i++ ) {
     Blob p2 = new Blob(new PVector(random(0,width),random(0,height)));
     p2.addProperty(new Mass(1.0));
     p2.addProperty(chr);
