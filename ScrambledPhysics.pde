@@ -298,12 +298,12 @@ class StokesDrag extends DragLaw {
     coeff = v;
   }
   void apply(Universe u) {
-    PVector force;
+    PVector force = new PVector();
     for ( Thing t: u.getThings() ) {
       if ( ! ( t instanceof Particle ) ) continue;
       Particle p = (Particle)t;
-      force = p.velocity.get();
-      force.mult(-coeff);
+      force.x = p.velocity.x * -coeff;
+      force.y = p.velocity.y * -coeff;
       p.addForce( force );
     }
   }
@@ -322,7 +322,7 @@ class Coulomb extends Law {
   
   void apply(Universe u) {
     Particle p1, p2;
-    PVector force;
+    PVector force = new PVector();
     for ( int i1 = 0; i1 < u.countThings(); i1++ ) {
       p1 = getParticle(u.getThing(i1));
       // Only valid for subclasses of Particle...
@@ -346,15 +346,16 @@ class Coulomb extends Law {
         // Store the charge of p2
         float p2_q = p2.getProperty("Charge");
         // Calculate the vector between the two particles...
-        force = PVector.sub( p1.getPosition(), p2.getPosition() );
-        // ...and the radius...
-        float r = force.mag();
+        force.x = p1.position.x - p2.position.x;
+        force.y = p1.position.y - p2.position.y;
+        // ...and the radius (squared)...
+        float rr = force.x * force.x + force.y * force.y;
         // ...if that's zero, the particles are in the same place, so we can't calculate a force
-        if ( r == 0 ) continue;
+        if ( rr == 0 ) continue;
         // Normalise the force vector to unit length
         force.normalize();
         // Calculate the magnitude of the force (according to Coulomb's law)
-        float m = k * p1_q * p2_q / (r*r);
+        float m = k * p1_q * p2_q / rr;
         // Multiply the normalised force vector by he magnitude 
         force.mult(m);
         // Add this force to the first particle...
