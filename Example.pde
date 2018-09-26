@@ -6,13 +6,14 @@ Universe u;
 void setup() {
   size(640,480);
   smooth();
+
   /*
    * In the standard Processing setup function,
    * initialise the universe and populate it with
    * particles
    */
   u = new Universe();
-  
+
   /*
    * Add laws to the universe
    * Available laws are:
@@ -29,20 +30,20 @@ void setup() {
   u.addLaw(new StokesDrag(0.1));
   // Makes particles wrap at the edges
   u.addLaw(new WrapEdge());
-  
+
   for (int i = 0; i < 100; i++) {
     // Initialise a series of particles at random positions
     PVector position = new PVector(
       random(u.min_x, u.max_x),
       random(u.min_y, u.max_y)
-    ); 
+    );
     Particle p = new Particle(position);
     // Give each particle a mass...
     p.addProperty(new Mass(random(10,20)));
     // ...and a charge of +10 or -10
     int charge = random(100) < 50 ? -10 : 10;
     p.addProperty(new Charge(charge));
-    
+
     // Add the particle to the universe
     u.addThing(p);
   }
@@ -50,15 +51,15 @@ void setup() {
 
 void draw() {
   /*
-   * Blank the screen with transparency set to fade out older 
+   * Blank the screen with transparency set to fade out older
    */
   fill(20,10);
   rect(0,0,width,height);
-  
+
   /*
    * Update the universe (which applies all laws
    * and updates the particles
-   */ 
+   */
   u.update();
 
   /*
