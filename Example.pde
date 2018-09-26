@@ -3,9 +3,12 @@
  */
 Universe u;
 
-void setup() {
+void settings() {
   size(800,600);
-  smooth();
+  smooth();  
+}
+
+void setup() {
   /*
    * In the standard Processing setup function,
    * initialise the universe and populate it with

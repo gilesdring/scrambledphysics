@@ -457,13 +457,13 @@ class BounceEdge extends EdgeLaw {
   int bounce( Particle p, Universe u ) {
     float new_x = getOffset( p.position.x, u.min_x, u.max_x );
     if ( new_x != p.position.x ) {
-      p.velocity.mult(new PVector(-1,1,1));
+      p.velocity.x *= -1;
       p.position.x = new_x;
       return bounce(p, u) + 1;
     }
     float new_y = getOffset( p.position.y, u.min_y, u.max_y );
     if ( new_y != p.position.y ) {
-      p.velocity.mult(new PVector(1,-1,1));
+      p.velocity.y *= -1;
       p.position.y = new_y;
       return bounce(p, u) + 1;
     }
