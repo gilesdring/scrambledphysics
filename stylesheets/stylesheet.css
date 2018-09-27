@@ -375,6 +375,23 @@ Full-Width Styles
 }
 
 
+#main_content nav ol {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 1em;
+}
+#main_content nav ol li {
+  padding-left: 0;
+  padding-right: 1em;
+  display: inline-block;
+}
+#main_content nav ol li:last-of-type {
+  padding-right: 0;
+}
+li.current {
+  font-weight: bolder;
+}
 
 /*******************************************************************************
 Small Device Styles
