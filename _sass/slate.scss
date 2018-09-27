@@ -3,7 +3,7 @@ Slate Theme for GitHub Pages
 by Jason Costello, @jsncostello
 *******************************************************************************/
 
-@import url(pygment_trac.css);
+@import 'pygment_trac';
 
 /*******************************************************************************
 MeyerWeb Reset
@@ -372,25 +372,6 @@ Full-Width Styles
 
 #footer_wrap {
   background: #212121;
-}
-
-
-#main_content nav ol {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  padding-bottom: 1em;
-}
-#main_content nav ol li {
-  padding-left: 0;
-  padding-right: 1em;
-  display: inline-block;
-}
-#main_content nav ol li:last-of-type {
-  padding-right: 0;
-}
-li.current {
-  font-weight: bolder;
 }
 
 /*******************************************************************************

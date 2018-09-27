@@ -1,1 +1,4 @@
 baseurl: /scrambledphysics
+
+sass:
+    style: compressed

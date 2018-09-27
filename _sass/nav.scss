@@ -1,0 +1,21 @@
+#main_content {
+  nav {
+    ol {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      padding-bottom: 1em;
+      li {
+        padding-left: 0;
+        padding-right: 1em;
+        display: inline-block;
+        &:last-of-type {
+          padding-right: 0;
+        }
+        &.current {
+          font-weight: bolder;
+        }
+      }
+    }
+  }
+}
