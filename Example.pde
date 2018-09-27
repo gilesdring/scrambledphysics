@@ -3,10 +3,31 @@
  */
 Universe u;
 
-void setup() {
-  size(640,480);
-  smooth();
+class ExampleParticle extends Particle {
+  ExampleParticle(PVector pos) { super(pos); }
 
+  void paint() {
+    if ( hidden ) return;
+    int particleSize = 10;
+    pushMatrix();
+    pushStyle();
+    translate( position.x, position.y );
+    ellipseMode(CENTER);
+    noStroke();
+    fill(lerpColor(#fc2020, #2045fc, abs(getProperty("Mass"))/30));
+    ellipse(0, 0, particleSize, particleSize);
+    popStyle();
+    popMatrix();
+  }
+}
+
+void settings() {
+  size(800,600);
+  smooth();
+}
+
+void setup() {
+  settings();
   /*
    * In the standard Processing setup function,
    * initialise the universe and populate it with
@@ -37,7 +58,7 @@ void setup() {
       random(u.min_x, u.max_x),
       random(u.min_y, u.max_y)
     );
-    Particle p = new Particle(position);
+    Particle p = new ExampleParticle(position);
     // Give each particle a mass...
     p.addProperty(new Mass(random(10,20)));
     // ...and a charge of +10 or -10
