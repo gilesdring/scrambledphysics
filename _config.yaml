@@ -1,3 +1,7 @@
+title: ScrambledPhysics
+description: |
+  Simple physics library for the Processing language, written in pure
+  processing, in a single file.
 baseurl: /scrambledphysics
 
 sass:
