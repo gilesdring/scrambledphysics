@@ -1,4 +1,4 @@
-<nav>
+<nav class="section">
   {% assign nav_pages = site.pages | where_exp:"item", "item.nav_order != null" | sort: "nav_order" %}
   <ol>
     {% for p in nav_pages -%}

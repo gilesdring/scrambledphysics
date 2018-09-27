@@ -4,5 +4,7 @@ description: |
   processing, in a single file.
 baseurl: /scrambledphysics
 
+theme: jekyll-theme-tactile
+
 sass:
     style: compressed
