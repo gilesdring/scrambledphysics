@@ -3,7 +3,7 @@
   <ol>
     {% for p in nav_pages -%}
     <li class="{% if page.url == p.url %}current{% endif %}">
-      <a href="{{ p.url }}">{{ p.title }}</a>
+      <a href="{{ p.url | prepend: site.baseurl }}">{{ p.title }}</a>
     </li>
     {%- endfor %}
   </ol>
