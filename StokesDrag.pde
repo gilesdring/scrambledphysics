@@ -12,6 +12,7 @@ class StokesDrag extends DragLaw {
       Particle p = (Particle)t;
       force.x = p.velocity.x * -coeff;
       force.y = p.velocity.y * -coeff;
+      force.z = p.velocity.z * -coeff;
       p.addForce( force );
     }
   }

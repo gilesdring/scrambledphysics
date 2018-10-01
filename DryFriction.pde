@@ -26,7 +26,9 @@ class DryFriction extends DragLaw {
       Particle p = (Particle)t;
       force = p.velocity.get();
       force.normalize();
-      force.mult(-mu);
+      force.x *= -mu;
+      force.y *= -mu;
+      force.z *= -mu;
       p.addForce( force );
     }
   }
