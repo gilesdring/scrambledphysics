@@ -17,9 +17,9 @@ class Coulomb extends Law {
       // Only valid for subclasses of Particle...
       if ( p1 == null ) continue;
       // ...with a charge
-      if (! p1.hasProperty("Charge") ) continue;
+      if ( p1.charge == 0 ) continue;
       // Store the charge of p1
-      float p1_q = p1.getProperty("Charge");
+      float p1_q = p1.charge;
       /*
        * Now iterate through all other particles
        * This is an optimisation, as the force applied on each pair of particles
@@ -31,9 +31,9 @@ class Coulomb extends Law {
         // Only valid for subclasses of Particle...
         if ( p2 == null ) continue;
         // ...with a charge
-        if (! p2.hasProperty("Charge") ) continue;
+        if ( p2.charge == 0 ) continue;
         // Store the charge of p2
-        float p2_q = p2.getProperty("Charge");
+        float p2_q = p2.charge;
         // Calculate the vector between the two particles...
         force.x = p1.position.x - p2.position.x;
         force.y = p1.position.y - p2.position.y;

@@ -38,10 +38,10 @@ class Gravity extends Law {
       // Cast t to a particle
       Particle p = (Particle)t;
       // Doesn't apply to things with no mass
-      if ( ! p.hasProperty("Mass") ) continue;
+      if ( p.mass == 0 ) continue;
       // Set the force to the constant, then multiply by the mass
       force = G.get();
-      force.mult(p.getProperty("Mass"));
+      force.mult(p.mass);
       // Add the force to the particle
       p.addForce(force);
     }

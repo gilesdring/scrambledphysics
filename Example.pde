@@ -14,7 +14,7 @@ class ExampleParticle extends Particle {
     translate( position.x, position.y );
     ellipseMode(CENTER);
     noStroke();
-    fill(lerpColor(#fc2020, #2045fc, abs(getProperty("Mass"))/30));
+    fill(lerpColor(#fc2020, #2045fc, (charge+20.0)/40.0));
     ellipse(0, 0, particleSize, particleSize);
     popStyle();
     popMatrix();
@@ -62,10 +62,9 @@ void setup() {
     );
     Particle p = new ExampleParticle(position);
     // Give each particle a mass...
-    p.addProperty(new Mass(random(10,20)));
+    p.setMass(random(10,20));
     // ...and a charge of +10 or -10
-    int charge = random(100) < 50 ? -20 : 20;
-    p.addProperty(new Charge(charge));
+    p.setCharge(random(100) < 50 ? -10 : +10);
 
     // Add the particle to the universe
     u.addThing(p);
