@@ -51,10 +51,13 @@ class BHTree {
   Particle calculateCentreOfCharge(Particle a, Particle b) {
     // TODO this isn't quite right at the moment. But it's righter.
     float mag = abs(a.charge) + abs(b.charge);
+    float aScale = abs(a.charge)/mag;
+    float bScale = abs(b.charge)/mag;
     Particle result = new Particle(
-      PVector.add(
-        PVector.mult(a.position, abs(a.charge)/mag),
-        PVector.mult(b.position, abs(b.charge)/mag)
+      new PVector(
+          a.position.x * aScale + b.position.x * bScale,
+          a.position.y * aScale + b.position.y * bScale,
+          a.position.z * aScale + b.position.z * bScale
       )
     );
     result.setCharge(a.charge + b.charge);

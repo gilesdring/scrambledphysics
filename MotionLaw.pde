@@ -13,7 +13,11 @@ class NewtonsLaws extends MotionLaw {
     for ( Thing t: u.getThings() ) {
       if ( ! (t instanceof Particle) ) continue;
       Particle p = (Particle)t;
-      if ( p.mass != 0 ) p.accelerate(PVector.div(p.force, p.mass));
+      PVector acceleration = p.force.copy();
+      acceleration.x /= p.mass;
+      acceleration.y /= p.mass;
+      acceleration.z /= p.mass;
+      if ( p.mass != 0 ) p.accelerate(acceleration);
     }
   }
 }
