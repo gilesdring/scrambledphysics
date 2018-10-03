@@ -2,6 +2,7 @@
  * Define a universe
  */
 Universe u;
+int population = 1000;
 
 class ExampleParticle extends Particle {
   ExampleParticle(PVector pos) { super(pos); }
@@ -28,6 +29,8 @@ void settings() {
 
 void setup() {
   settings();
+  background(50);
+
   /*
    * In the standard Processing setup function,
    * initialise the universe and populate it with
@@ -54,7 +57,7 @@ void setup() {
   // Add Newtonian Mechanics
   u.addLaw(new NewtonsLaws());
 
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < population; i++) {
     // Initialise a series of particles at random positions
     PVector position = new PVector(
       random(u.min_x, u.max_x),
@@ -75,9 +78,9 @@ void draw() {
   /*
    * Blank the screen with transparency set to fade out older
    */
+  noStroke();
   fill(20,10);
   rect(0,0,width,height);
-
   /*
    * Update the universe (which applies all laws
    * and updates the particles
@@ -99,9 +102,37 @@ void draw() {
   /*
    * Add a label
    */
+  label("ScrambledPhysics Example sketch", 5, height-5);
+
+  /*
+   * Print frame rate
+   */
+  label(
+    "Pop: " + population
+    + " | Rate: " + round(frameRate*10)/10.0 + " ["
+    + (u.barnesHut ? "B" : "")
+    + (u.DEBUG ? "D" : "")
+    + "]",
+    width-205, height-5);
+}
+
+void label(String message, float x, float y) {
+  pushMatrix(); pushStyle();
+  translate(x, y);
   noStroke();
   fill(180);
-  rect(5, height-23, 205, 18, 5);
+  rect(0, 0, 205, -18, 5);
   fill(20);
-  text("ScrambledPhysics Example sketch", 10, height-10);
+  text(message, 5, -5);
+  popStyle(); popMatrix();
+}
+
+void keyReleased() {
+  if ( key == 'b' || key == 'B' ) {
+    u.barnesHut = ! u.barnesHut;
+    return;
+  }
+  if ( key == 'd' || key == 'D' ) {
+    u.DEBUG = ! u.DEBUG;
+  }
 }
