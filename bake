@@ -1,0 +1,12 @@
+output_dir="./output"
+
+[ -d ${output_dir} ] || mkdir -p ${output_dir}
+
+function build {
+  log=${output_dir}/build.log
+  echo Starting build of ScrambledPhysics > $log
+  echo Including the following files: > $log
+  find *.pde \( -name Example.pde \) -o -print | tee -a $log | xargs cat > ${output_dir}/ScrambledPhysics.pde
+}
+
+build

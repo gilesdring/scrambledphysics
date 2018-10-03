@@ -1,5 +1,3 @@
-// ==================================================================
-
 class BHTree {
   Particle body;   // body or aggregate body stored in this node
   PVector origin;
