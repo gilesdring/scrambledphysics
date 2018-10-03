@@ -3,6 +3,8 @@
  */
 Universe u;
 
+static int population = 100;
+
 class ExampleParticle extends Particle {
   ExampleParticle(PVector pos) { super(pos); }
 
@@ -54,7 +56,7 @@ void setup() {
   // Add motion law
   u.addLaw(new NewtonsLaws());
 
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < population; i++) {
     // Initialise a series of particles at random positions
     PVector position = new PVector(
       random(0, width),

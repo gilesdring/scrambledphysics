@@ -56,10 +56,13 @@ class BHTree {
   Particle calculateCentreOfCharge(Particle a, Particle b) {
     // TODO this isn't quite right at the moment. But it's righter.
     float mag = abs(a.charge) + abs(b.charge);
+    float aScale = abs(a.charge)/mag;
+    float bScale = abs(b.charge)/mag;
     Particle result = new Particle(
-      PVector.add(
-        PVector.mult(a.position, abs(a.charge)/mag),
-        PVector.mult(b.position, abs(b.charge)/mag)
+      new PVector(
+          a.position.x * aScale + b.position.x * bScale,
+          a.position.y * aScale + b.position.y * bScale,
+          a.position.z * aScale + b.position.z * bScale
       )
     );
     result.setCharge(a.charge + b.charge);
@@ -458,7 +461,11 @@ class NewtonsLaws extends MotionLaw {
     for ( Thing t: u.getThings() ) {
       if ( ! (t instanceof Particle) ) continue;
       Particle p = (Particle)t;
-      if ( p.mass != 0 ) p.accelerate(PVector.div(p.force, p.mass));
+      PVector acceleration = new PVector();
+      acceleration.x = p.force.x / p.mass;
+      acceleration.y = p.force.y / p.mass;
+      acceleration.z = p.force.z / p.mass;
+      if ( p.mass != 0 ) p.accelerate(acceleration);
     }
   }
 }
