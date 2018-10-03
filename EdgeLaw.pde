@@ -1,6 +1,9 @@
 abstract class EdgeLaw extends Law {
-  EdgeLaw() { super("Edge"); }
-  boolean inUniverse(Particle p, Universe u) {
-    return ( p.position.x > u.min_x ) && ( p.position.x < u.max_x ) && ( p.position.y > u.min_y ) && ( p.position.y < u.max_y );
+  float minX, minY, maxX, maxY;
+  EdgeLaw(float x, float y, float w, float h) {
+    super("Edge");
+    minX = min(x, x+w); maxX = max(x, x+w);
+    minY = min(y, y+h); maxY = max(y, y+h);
   }
+  EdgeLaw() { this(0,0,width,height); }
 }

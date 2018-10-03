@@ -31,6 +31,11 @@ void setup() {
   settings();
   background(50);
 
+  float minX = 50;
+  float minY = 50;
+  float maxX = width - minX;
+  float maxY = height - minY;
+
   /*
    * In the standard Processing setup function,
    * initialise the universe and populate it with
@@ -53,15 +58,15 @@ void setup() {
   // Applies drag proportional to the velocity of the particle
   u.addLaw(new StokesDrag(0.1));
   // Makes particles wrap at the edges
-  u.addLaw(new WrapEdge());
+  u.addLaw(new WrapEdge(minX, minY, maxX - minX, maxY - minY));
   // Add Newtonian Mechanics
   u.addLaw(new NewtonsLaws());
 
   for (int i = 0; i < population; i++) {
     // Initialise a series of particles at random positions
     PVector position = new PVector(
-      random(u.min_x, u.max_x),
-      random(u.min_y, u.max_y)
+      random(minX, maxX),
+      random(minY, maxY)
     );
     Particle p = new ExampleParticle(position);
     // Give each particle a mass...

@@ -11,9 +11,7 @@ class Universe {
   /**
    * A series of floats containing the bounds of the defined universe
    */
-  float max_x, min_x, max_y, min_y;
-
-  float footprintMaxX, footprintMaxY, footprintMinX, footprintMinY;
+  float maxX, maxY, minX, minY;
   /**
    * A <code>HashMap</code> of the laws that apply to the universe.
    */
@@ -129,30 +127,34 @@ class Universe {
   /**
    * Set the bounds of the universe to between x_min, y_min and x_max, y_max
    */
-  void setBounds(float x_min, float y_min, float x_max, float y_max) {
-    footprintMinX = MAX_FLOAT;
-    footprintMinY = MAX_FLOAT;
-    footprintMaxX = -MAX_FLOAT;
-    footprintMaxY = -MAX_FLOAT;
+  void setBounds() {
+    if ( things.size() < 1 ) {
+      minX = 0;
+      minY = 0;
+      maxX = width;
+      maxY = height;
+      return;
+    }
+
+    minX = MAX_FLOAT;
+    minY = MAX_FLOAT;
+    maxX = -MAX_FLOAT;
+    maxY = -MAX_FLOAT;
+
     for (Thing t: things) {
       if (t instanceof Particle) {
         PVector pos = ((Particle)t).getPosition();
-        footprintMinX = min( footprintMinX, pos.x );
-        footprintMinY = min( footprintMinY, pos.y );
-        footprintMaxX = max( footprintMaxX, pos.x );
-        footprintMaxY = max( footprintMaxY, pos.y );
+        minX = min( minX, pos.x );
+        minY = min( minY, pos.y );
+        maxX = max( maxX, pos.x );
+        maxY = max( maxY, pos.y );
       }
     }
-    min_x = x_min;
-    min_y = y_min;
-    max_x = x_max;
-    max_y = y_max;
   }
 
   /**
    * Set the bounds of the universe to the current screen size
    */
-  void setBounds() { setBounds(0, 0, width, height); }
 
   /**
    * Barnes Hut related functions
@@ -160,7 +162,7 @@ class Universe {
   void initBhTree() {
     setBounds();
     if ( barnesHut ) {
-      bhTree = new BHTree(footprintMinX - 10, footprintMinY - 10, max( footprintMaxX - footprintMinX, footprintMaxY - footprintMinY ) + 21);
+      bhTree = new BHTree(minX - 10, minY - 10, max( maxX - minX, maxY - minY ) + 21);
       for (Thing t: things) {
         if (t instanceof Particle) {
           bhTree.insert((Particle)t);
