@@ -55,9 +55,16 @@ class Particle extends ScrambledObject implements Thing {
     force.add(a);
   }
 
+  PVector getForce() {
+    return force;
+  }
+
+  void accelerate(PVector a) {
+    acceleration = a;
+  }
+
   void update() {
     if (!locked) {
-      if ( hasProperty("Mass") ) acceleration = PVector.mult( force, 1/getProperty("Mass"));
       velocity.add(acceleration);
       position.add(PVector.mult( velocity, 1/frameRate) );
     }

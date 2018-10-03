@@ -67,45 +67,40 @@ class Universe {
    * the universe to be updated - typically whenever the sketch is drawn
    */
   void update() {
-    Law edge = null, drag = null;
     Law law;
+
+    try {
+      laws.get("Edge").apply(this);
+    } catch(NullPointerException e) {}
+
     // Iterate through the laws applied to the universe
     for (String name : laws.keySet()) {
       law = laws.get(name);
-      if (law instanceof DragLaw) {
+      if ( (law instanceof EdgeLaw) || (law instanceof MotionLaw) ) {
         /*
-         * We want to handle DragLaw laws last, as they are affected
-         * by EdgeLaws laws.
+         * We want Edge laws to apply first and motionlaws to apply last
          */
-        drag = law;
         continue;
-      } else if (law instanceof EdgeLaw ) {
-        /*
-         * We want to handle EdgeLaw laws second-to-last, as they affect
-         * by DragLaw laws.
-         */
-        edge = law;
-        continue;
-      } else {
-        /*
-         * Apply the law to the universe. This will typically alter the state of the
-         * members in the universe (e.g. applying forces, changing position, etc)
-         * although it could do absolutely anything!
-         */
-        law.apply(this);
       }
+      /*
+       * Apply the law to the universe. This will typically alter the state of the
+       * members in the universe (e.g. applying forces, changing position, etc)
+       * although it could do absolutely anything!
+       */
+      law.apply(this);
     }
+
+    try {
+      laws.get("Motion").apply(this);
+    }
+    catch(NullPointerException e) {}
+
     /*
      * Iterate through all the things in the universe and update them. Typically
      * this will calculate the acceleration, velocity and position, but could do
      * anything...
      */
     for (Thing t: things) t.update();
-    // Apply any saved edge law
-    if ( edge != null ) edge.apply(this);
-    // Apply any saved drag law
-    // TODO Ref issue #1 - may want to update the things in the universe again having done this
-    if ( drag != null ) drag.apply(this);
   }
   /**
    * Paint the universe by calling the paint method of everything in the universe.
@@ -124,6 +119,7 @@ class Universe {
     max_x = x_max;
     max_y = y_max;
   }
+
   /**
    * Set the bounds of the universe to the current screen size
    */

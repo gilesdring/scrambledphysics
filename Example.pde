@@ -51,7 +51,9 @@ void setup() {
   u.addLaw(new StokesDrag(0.1));
   // Makes particles wrap at the edges
   u.addLaw(new WrapEdge());
-  
+  // Add Newtonian Mechanics
+  u.addLaw(new NewtonsLaws());
+
   for (int i = 0; i < 100; i++) {
     // Initialise a series of particles at random positions
     PVector position = new PVector(
@@ -62,7 +64,7 @@ void setup() {
     // Give each particle a mass...
     p.addProperty(new Mass(random(10,20)));
     // ...and a charge of +10 or -10
-    int charge = random(100) < 50 ? -10 : 10;
+    int charge = random(100) < 50 ? -20 : 20;
     p.addProperty(new Charge(charge));
 
     // Add the particle to the universe
