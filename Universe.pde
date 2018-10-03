@@ -67,15 +67,13 @@ class Universe {
    * the universe to be updated - typically whenever the sketch is drawn
    */
   void update() {
-    Law law;
 
     try {
       laws.get("Edge").apply(this);
     } catch(NullPointerException e) {}
 
     // Iterate through the laws applied to the universe
-    for (String name : laws.keySet()) {
-      law = laws.get(name);
+    for (Law law : laws.values()) {
       if ( (law instanceof EdgeLaw) || (law instanceof MotionLaw) ) {
         /*
          * We want Edge laws to apply first and motionlaws to apply last
