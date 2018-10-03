@@ -4,11 +4,12 @@ Emitter e;
 
 void setup() {
   size(640,100);
-  u = new Universe();
+  u = new Universe(false);
   u.addLaw(new KillEdge());
   u.addLaw(new Coulomb());
+  u.addLaw(new NewtonsLaws());
   u.setBounds(0,0,width-10,height);
-  e = new Emitter(new PVector(10,height/2), new PVector(100,0), u); 
+  e = new Emitter(new PVector(10,height/2), new PVector(100,0), u);
 }
 
 void draw() {
@@ -33,7 +34,7 @@ class Emitter {
   PVector smudge(PVector i, PVector min, PVector max) {
     PVector smudge = new PVector( random(min.x, max.x), random(min.y, max.y), random(min.z, max.z));
     smudge.add(i);
-    return smudge; 
+    return smudge;
   }
   void update() {
     if ( random(1.0) < boundary ) {
@@ -41,8 +42,8 @@ class Emitter {
         position.get(),
         smudge(velocity, new PVector(-50,-1), new PVector(0,1))
         );
-      p.addProperty(new Mass(1));
-      p.addProperty(new Charge(0.1));
+      p.setMass(1);
+      p.setCharge(0.1);
       universe.addThing(p);
     }
   }
@@ -64,7 +65,6 @@ class BigParticle extends Particle {
     noStroke();
     translate(position.x, position.y);
     ellipse(0,0,size,size);
-    popMatrix(); 
+    popMatrix();
   }
 }
-
